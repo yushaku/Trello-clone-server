@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { getDb } from "../configs/mongodb";
+import { getDb } from "../configs/mongodb.js";
 
 const cardCollectionName = "cards";
 
@@ -10,7 +10,7 @@ const cardCollectionSchema = Joi.object({
    cover:Joi.string().default(null),
    
    createdAt: Joi.date().timestamp().default(Date.now()),
-   updatedAt: Joi.date().timestamp.default(null),
+   updatedAt: Joi.date().timestamp().default(null),
    _destroy: Joi.boolean().default(false),
 });
 
@@ -25,8 +25,8 @@ const createNew = async (data) => {
       return result.ops
 
    } catch (error) {
-      console.log(error);
+      throw new Error(error)
    }
 };
 
-export const boardModel = { createNew };
+export const cardModel = { createNew };

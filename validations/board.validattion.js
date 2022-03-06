@@ -4,7 +4,7 @@ import {httpStatusCode} from '../untilities/constants.js'
 const createNew = async(req, res, next)=>{
 
    const condition = Joi.object({
-      title: Joi.string().required().max(500)
+      title: Joi.string().required().max(500).trim()
    })
 
    try {
