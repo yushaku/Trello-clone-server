@@ -1,0 +1,35 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "api for yushaku trello app",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon --inspect index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel ./src -d ./build/src",
+    "build": "npm run clean && npm run build-babel",
+    "production": "npm run build && node ./build/src/server.js",
+    "dev": "nodemon --exec ./node_modules/.bin/babel-node ./src/server.js"
+  },
+  "keywords": [],
+  "author": "yushaku",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.17.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "joi": "^17.6.0",
+    "mongodb": "^4.4.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.6",
+    "@babel/core": "^7.17.5",
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "nodemon": "^2.0.15"
+  }
+}
