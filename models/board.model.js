@@ -1,5 +1,8 @@
 import Joi from "joi";
+import { ObjectId } from "mongodb";
 import { getDb } from "../configs/mongodb.js";
+import {columnModel } from './column.model.js'
+import {cardModel} from './card.model.js'
 
 const boardCollectionName = "boards";
 
@@ -19,10 +22,60 @@ const createNew = async (data) => {
    try {
       const value = await validateSchema(data);
       const result = await getDb().collection(boardCollectionName).insertOne(value);
-      return result.ops
+      return result.ops;
    } catch (error) {
-      throw new Error(error)
+      throw new Error(error);
    }
 };
 
-export const boardModel = { createNew };
+/**
+ * @param {string} boardId
+ * @param {string} columnId
+ */
+const pushColumnOrder = async (boardId, columnId) => {
+   try {
+      const result = await getDb()
+         .collection(boardCollectionName)
+         .findOneAndUpdate(
+            { _id: ObjectId(boardId) },
+            { $push: { columnOrder: columnId } },
+            { returnNewDocument: true }
+         );
+      return result.value;
+   } catch (error) {
+      throw new Error(error);
+   }
+};
+
+const getFullBoard = async (id) => {
+   try {
+      const result = await getDb()
+         .collection(boardCollectionName)
+         .aggregate([
+            { $match: { _id: ObjectId(id) } },
+            {
+               $lookup: {
+                  from: columnModel.columnCollectionName,
+                  localField: "_id",
+                  foreignField: "boardId",
+                  as: "columns",
+               },
+            },
+            {
+               $lookup: {
+                  from: cardModel.cardCollectionName,
+                  localField: "_id",
+                  foreignField: "boardId",
+                  as: "cards",
+               },
+            },
+         ])
+         .toArray();
+
+      return result[0] || {};
+   } catch (error) {
+      throw new Error(error);
+   }
+};
+
+export const boardModel = { boardCollectionName, createNew, getFullBoard, pushColumnOrder };

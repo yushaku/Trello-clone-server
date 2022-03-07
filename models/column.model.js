@@ -1,11 +1,12 @@
 import Joi from "joi";
 import { getDb } from "../configs/mongodb.js";
 import { ObjectId } from "mongodb";
+
 const columnCollectionName = "columns";
 
 const columnCollectionSchema = Joi.object({
    boardId: Joi.string().required(),
-   title: Joi.string().required().max(20),
+   title: Joi.string().required(),
    cardOrder: Joi.array().items(Joi.string()).default([]),
    createdAt: Joi.date().timestamp().default(Date.now()),
    updatedAt: Joi.date().timestamp().default(null),
@@ -18,27 +19,42 @@ const validateSchema = async (data) => {
 
 const createNew = async (data) => {
    try {
-      const value = await validateSchema(data);
-      const result = await getDb().collection(columnCollectionName).insertOne(value);
-      return result
-
+      const validatedValue = await validateSchema(data);
+      const insertValue = {
+         ...validatedValue,
+         boardId: ObjectId(validatedValue.boardId),
+      };
+      const result = await getDb().collection(columnCollectionName).insertOne(insertValue);
+      return result;
    } catch (error) {
-      throw new Error(error)
+      throw new Error(error);
    }
 };
 
+const pushCardOrder = async (columnId, cardId) => {
+   try {
+      const result = await getDb()
+         .collection(columnCollectionName)
+         .findOneAndUpdate(
+            { _id: ObjectId(columnId) },
+            { $push: { cardOrder: cardId } },
+            { returnNewDocument: true }
+         );
+      return result.value;
+
+   } catch (error) {
+      throw new Error(error);
+   }
+};
 const update = async (id, data) => {
    try {
-      const result = await getDb().collection(columnCollectionName).findOneAndUpdate(
-         {_id: ObjectId(id)},
-         {$set: data},
-         { returnNewDocument: true }
-      )
-      return result
-
+      const result = await getDb()
+         .collection(columnCollectionName)
+         .findOneAndUpdate({ _id: ObjectId(id) }, { $set: data }, { returnNewDocument: true });
+      return result;
    } catch (error) {
-      throw new Error(error)
+      throw new Error(error);
    }
 };
 
-export const columnModel = { createNew, update };
+export const columnModel = {columnCollectionName, createNew,pushCardOrder, update };
