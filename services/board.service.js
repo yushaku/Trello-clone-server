@@ -14,6 +14,7 @@ const getFullBoard = async(id)=>{
    try {
       const board = await boardModel.getFullBoard(id)
 
+      if(!board || !board.columns) return
       //push cards to its column
       board.columns.forEach((column)=>{
          column.cards = board.cards.filter((card) =>
