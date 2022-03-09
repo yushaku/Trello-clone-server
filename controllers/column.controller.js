@@ -13,8 +13,8 @@ const createNew = async (req, res) => {
 const update = async (req, res) => {
    try {
 
-      const { _id } = req.params;
-      const result = await columnService.update(_id, req.body);
+      const { id } = req.params
+      const result = await columnService.update(id, req.body);
       res.status(httpStatusCode.OK).json({result});
 
    } catch (error) {

@@ -10,6 +10,19 @@ const createNew = async(req, res)=> {
    }
 }
 
+const update = async(req, res)=> {
+   try {
 
-export const cardController = { createNew }
+      const { id } = req.params
+      const result = await cardService.update(id, req.body);
+      res.status(httpStatusCode.OK).json({result});
+
+   } catch (error) {
+      console.log("error at controller")
+      res.status(httpStatusCode.INTERNAL_SERVER).json(error.messgae);
+   }
+}
+
+
+export const cardController = { createNew, update }
 

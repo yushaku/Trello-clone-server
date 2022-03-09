@@ -1,5 +1,6 @@
 import {columnModel} from '../models/column.model.js'
 import { boardModel } from '../models/board.model.js'
+import { cardModel } from '../models/card.model.js'
 
 const createNew = async(data)=>{
    try {
@@ -9,7 +10,7 @@ const createNew = async(data)=>{
       const boardId = data.boardId.toString()
       const columnId = newColumn.insertedId.toString()
 
-      const updatedBoard = await boardModel.pushColumnOrder(boardId, columnId)
+      await boardModel.pushColumnOrder(boardId, columnId)
 
       return newColumn
 
@@ -20,11 +21,21 @@ const createNew = async(data)=>{
 
 const update = async (id, data)=>{
    try {
+      console.log(data)
       const updateData = {
          ...data,
          updatedAt: Date.now()
       }
+
+      if(updateData._id) delete updateData._id
+      if(updateData.cards) delete updateData.cards
+
       const result = await columnModel.update(id, updateData)
+
+      if(updateData._destroy){
+         cardModel.softDeleteManyCards(updateData.cardOrder)
+      }
+
       return result
 
    } catch (error) {
