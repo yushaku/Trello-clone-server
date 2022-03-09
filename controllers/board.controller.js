@@ -23,5 +23,18 @@ const getFullBoard = async(req, res)=> {
    }
 }
 
-export const boardController = { createNew, getFullBoard }
+const update = async (req, res) => {
+   try {
+
+      const { id } = req.params
+      const result = await boardService.update(id, req.body);
+      res.status(httpStatusCode.OK).json({result});
+
+   } catch (error) {
+      console.log("error at controller")
+      res.status(httpStatusCode.INTERNAL_SERVER).json(error.messgae);
+   }
+};
+
+export const boardController = { createNew, getFullBoard, update }
 

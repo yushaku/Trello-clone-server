@@ -10,5 +10,6 @@ router.route('/')
 
 router.route('/:id')
    .get(boardController.getFullBoard)
+   .put( boardController.update)
 
 export const boardRouter = router

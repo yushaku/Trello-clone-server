@@ -52,7 +52,12 @@ const getFullBoard = async (id) => {
       const result = await getDb()
          .collection(boardCollectionName)
          .aggregate([
-            { $match: { _id: ObjectId(id) } },
+            { $match: 
+               { 
+                  _id: ObjectId(id),
+                  _destroy:false
+               }
+            },
             {
                $lookup: {
                   from: columnModel.columnCollectionName,
@@ -78,4 +83,21 @@ const getFullBoard = async (id) => {
    }
 };
 
-export const boardModel = { boardCollectionName, createNew, getFullBoard, pushColumnOrder };
+const update = async (id, data) => {
+
+   try {
+      const updateData = { ...data};
+      const result = await getDb()
+         .collection(boardCollectionName)
+         .findOneAndUpdate(
+            { _id: ObjectId(id) }, 
+            { $set: updateData } 
+         );
+      return result;
+   } catch (error) {
+      console.log("error at model")
+      throw new Error(error);
+   }
+};
+
+export const boardModel = { boardCollectionName, createNew, getFullBoard, pushColumnOrder, update };

@@ -41,20 +41,26 @@ const pushCardOrder = async (columnId, cardId) => {
             { returnNewDocument: true }
          );
       return result.value;
-
    } catch (error) {
       throw new Error(error);
    }
 };
+
 const update = async (id, data) => {
    try {
+      const updateData = { ...data};
+      if(data.boardId) updateData.boardId = ObjectId(data.boardId)
+      
       const result = await getDb()
          .collection(columnCollectionName)
-         .findOneAndUpdate({ _id: ObjectId(id) }, { $set: data }, { returnNewDocument: true });
+         .findOneAndUpdate(
+            { _id: ObjectId(id) }, 
+            { $set: updateData } 
+         );
       return result;
    } catch (error) {
       throw new Error(error);
    }
 };
 
-export const columnModel = {columnCollectionName, createNew,pushCardOrder, update };
+export const columnModel = { columnCollectionName, createNew, pushCardOrder, update };
