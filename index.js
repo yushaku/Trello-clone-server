@@ -22,8 +22,8 @@ const bootServer = () => {
    app.use(cors(corsOptions))
    app.use(express.json());
 
-   app.listen(env.PORT, () => {
-      console.log(`server is running at port ${env.PORT}`);
+   app.listen(env.PORT || process.env.PORT, () => {
+      console.log(`server is running`);
    });
 
    app.use("/v1", apiV1);
